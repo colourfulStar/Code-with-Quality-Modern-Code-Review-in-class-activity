@@ -25,34 +25,43 @@ def is_win(game):
 def main():
     # Initialize the game board
     game = [[' ' for _ in range(3)] for _ in range(3)]
-    player1 = 'X'
-    player2 = 'O'
-    turn = True  # False for player 1's turn, True for player 2's turn. Player 1 first.
+    current_player = 'X'  # Player 1 (X) starts
 
     print("X = Player 1")
     print("O = Player 2")
 
+    won = False
     for n in range(9):
-        turn = not turn  # Toggle turn
+        player_num = '1' if current_player == 'X' else '2'
+        print(f"Player {player_num}: ", end="")
 
-        if turn == False:
-            print("Player 1: ", end="")
-        else:
-            print("Player 2: ", end="")
+        while True:
+            try:
+                print("Which cell to mark? i:[1..3], j:[1..3]: ", end="")
+                i, j = map(int, input().split())
+            except ValueError:
+                print("Invalid input! Please enter two integers.")
+                continue
 
-        print("Which cell to mark? i:[1..3], j:[1..3]: ", end="")
-        i, j = map(int, input().split())
+            i, j = i - 1, j - 1  # convert to 0-based indices
+            if not (0 <= i <= 2 and 0 <= j <= 2):
+                print("Invalid range! Please enter values 1-3.")
+                continue
+            if game[i][j] != ' ':
+                print("Cell already occupied! Choose another.")
+                continue
+            break
 
-        if turn == False:
-            game[i][j] = 'X'
-        else:
-            game[i][j] = 'O'
+        game[i][j] = current_player
 
         if is_win(game):
             print("Win!")
+            won = True
             break
 
-    if n == 8:  # All 9 cells have been filled (n goes 0 to 8)
+        current_player = 'O' if current_player == 'X' else 'X'
+
+    if not won:  # no winner after all 9 cells filled
         print("Tie!")
 
     # Show the game to console
